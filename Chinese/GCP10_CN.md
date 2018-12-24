@@ -1,6 +1,6 @@
 ﻿# GCP-10智能合约协议
 
-GCP-10 : [English](GCP10_EN.md) | [中文](GCP10_CN.md)
+GCP-10 : [English](/English/GCP10_EN.md) | [中文](/Chinese/GCP10_CN.md)
 
 ## 目录
  - [概述](#概述)
