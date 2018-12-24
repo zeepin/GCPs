@@ -218,9 +218,9 @@ Function: Authorize the TokenID owned by the address from to the address to
 
 Steps:
 
-* The address to"_" is not empty;
-* Determine that the owner of this TokenID is consistent with the address from;
-* Confirm that the address from “_” has the legit rights of the party.
+* The address `to` is not empty;
+* Determine that the owner of this TokenID is consistent with the address `from`;
+* Confirm that the address `from` has the legit rights of the party.
 
 ```c
 char *Approve(char *from, char *to, char *TokenID)
@@ -237,7 +237,7 @@ char *Approve(char *from, char *to, char *TokenID)
 ```
 Then look at the function **ApproveInternal()** did:
 
-Here, the TokenID is added with an ap. prefix and then stored with the address to.
+Here, the TokenID is added with an `ap.` prefix and then stored with the address `to`.
 
 ```c
 void ApproveInternal(char *to, char *TokenID)
@@ -254,7 +254,7 @@ Function: Query the authorized address of this TokenID.
 
 Steps:
 
-* Add TokenID prefix ap.;
+* Add TokenID prefix `ap.`;
 * deciding whether the newTokenID after the added prefix has the corresponding address, if empty, the input is incorrect;
 * Get the address
 
@@ -276,7 +276,7 @@ Function: Query whether the authorized address of this TokenID matches the given
 
 Steps:
 
-* Add TokenID prefix ap.;
+* Add TokenID prefix `ap.`;
 * Extract the address that owns this newTokenID, ZPT_Storage_Get(newTokenID);
 * Then strcmp() compares the two addresses and returns int type;
 * Treat the int type as a char type and return 0 or 1.
@@ -321,7 +321,7 @@ Function: The current TokenID is authorized to call the contract to transfer the
 
 Steps:
 
-* The address to is not empty;
+* The address `to` is not empty;
 * Call the ApprovedFor() function to confirm that the TokenID authorized address matches the given address;
 * from must be the owner of the TokenID;
 * Confirm that the authorized address has the rights of the parties;
