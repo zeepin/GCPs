@@ -1,6 +1,6 @@
 # GCP-101 Smart Contract Protocol
 
-Zeepin Token GCP101
+GCP-101 : [English](/English/GCP101_EN.md) | [中文](/Chinese/GCP101_CN.md)
 
 ## Directory
  - [Simple Summary](#Simple-Summary)
@@ -11,7 +11,7 @@ Zeepin Token GCP101
 ## Simple Summary
 GCP-101(Galaxy Consensus Proposal - 101) is a standard interface based on GPC-10.
 ## Abstract
-This standard adds authorities and several methods for a contract and allows the contract to be controlled and managed. They can be used to intialize the contract and realize the increase and decrease of the total token supply.
+This standard adds authority and new methods for a contract and allows the contract to be controlled and managed. The authority can be used in intialization and realize the increase and decrease of the total token supply. In addtion, several methods (transfer, transferFrom and approve) in GPC-10 protocol need to be modified according to the new standard.
 ## Specification
 ### Basic Interpretations
 You may need two kinds of special account address to control and manage the depolyed contract.
@@ -19,7 +19,7 @@ You may need two kinds of special account address to control and manage the depo
 char * ceoAddress = "/* address */"; //Highest authority
 char * adminAddress = "/* address */"; //Administrator
 ```
-ceoAddress intializes a contract, and it can invoke the pause and unPause method to control the contract. Some methods like init, transfer, transferFrom and approve in GPC-10 need to be modified to correspond to the new protocol.
+`ceoAddress` initializes a contract, and it can invoke the `pause` and `unPause` methods to control the contract. The `adminAddress` will be alloted balance equal to the `totalSupply` value in initialization, and then transfer to ordinary users.
 ### Methods Analysis
 #### pause
 Pause the contract when an unexpected situation occurs. It can only be invoked by `ceoAddress`. This method will stop the users to invoke the methods including `increaseTotal`, `decreaseTotal`, `transfer`, `transferFrom` and `approve`, but other methods can be invoked normally.
@@ -51,7 +51,6 @@ char * unPause(){
 ```
 #### init (modified)
 Initialize the first deployed contract. It can only be invoked by `ceoAddress`. The initialization will determine the `totalSupply` of the token, and allot the same amount to the `adminAddress `. In addition, it will intialize `paused` to 0, which means the contract can be invoked normally.
-Once a contract has been initialized, the `init` method can not be invoked again.
 ```c
 char * init(char * totalSupply, char * adminBalance){
 	if (arrayLen(ZPT_Storage_Get("totalSupply")) != 0)
