@@ -1,6 +1,6 @@
 # GCP-10 Smart Contract Protocol
 
-Zeepin Token GCP10
+GCP-10 : [English](/English/GCP10_EN.md) | [中文](/Chinese/GCP10_CN.md)
 
 ## Directory
  - [Simple Summary](#Simple-Summary)
@@ -12,7 +12,7 @@ Zeepin Token GCP10
 ## Simple Summary
 GCP-10(Galaxy Consensus Proposal - 10) is a standard interface for fungible tokens, which is similar to ERC-20 based on Ethereum.
 ## Abstract
-The following standard written by C language allows for the implementation of a standard API for tokens within smart contracts deployed on Zeepin Chain. This standard provides basic functionality to transfer tokens, as well as allow tokens to be approved so they can be spent by another on-chain third party. In addtion, it provides authority for CEO address and administrator address to control the deployed contract.
+The following standard written by C language allows for the implementation of a standard API for tokens within smart contracts deployed on Zeepin Chain. This standard provides basic functionality to transfer tokens, as well as allow tokens to be approved so they can be spent by another on-chain third party.
 ## Motivation
 A standard interface allows any tokens on Zeepin Chain to be re-used by other applications: from wallets to decentralized exchanges.
 ## Specification
@@ -80,10 +80,12 @@ char * balanceOf(char * address){
 ```
 #### transfer
 Transfer `amountChar` amount from `fromAddr` to `toAddr`. Do not worry `amountChar` is a `char` data type, you can transform it to `int` type by interface `Atoi`.
+
+Transfers of 0 values are prohibited for the consideration of our chain utilization.
+
 The function SHOULD `return` directly if:
 - The `fromAddr` is inconsistent with the caller address, and you can use the interface `ZPT_Runtime_CheckWitness` to check this. 
 - The `fromAddr` account balance does not have enough tokens to spend.
-Transfers of 0 values are prohibited for the consideration of our chain utilization.
 ```c
 char * transfer(char * fromAddr, char * toAddr, char * amountChar){
 	if (arrayLen(ZPT_Storage_Get("totalSupply")) == 0)
@@ -118,12 +120,14 @@ char * transfer(char * fromAddr, char * toAddr, char * amountChar){
 #### transferFrom
 The `transferFrom` method allows the contract to transfer tokens on someone's behalf.
 Firstly the `fromAddr` approves `spenderAddr` a certain amount of allowance, and then `spenderAddr` can spend tokens of `fromAddr` within this amount on behalf of the `fromAddr`.
+
+Transfers of 0 values are prohibited for the consideration of our chain utilization.
+
 The function SHOULD `return` directly if:
 - The `spenderAddr` is inconsistent with the caller address;
 - The `fromAddr` does not approve `spenderAddr`;
 - The allowance is insufficient to spend.
 - The balance of `fromAddr` is insufficient to spend.
-Transfers of 0 values are prohibited for the consideration of our chain utilization.
 ```c
 char * transferFrom(char *fromAddr, char *spenderAddr, char *toAddr, char *amountChar){
 	if (arrayLen(ZPT_Storage_Get("totalSupply")) == 0)
@@ -171,10 +175,12 @@ char * transferFrom(char *fromAddr, char *spenderAddr, char *toAddr, char *amoun
 ```
 #### approve
 Allows `spenderAddr` to withdraw from `ownerAddr` account multiple times, up to the `allowedChar` amount. If this function is called again it overwrites the current allowance.
+
+Approves 0 values are prohibited for the consideration of our chain utilization.
+
 The function SHOULD `return` directly if:
 - The `ownerAddr` is inconsistent with the caller address;
 - The allowance is larger than the balance of the `ownerAddr`.
-Approves 0 values are prohibited for the consideration of our chain utilization.
 ```c
 char * approve(char * ownerAddr, char * spenderAddr, char * allowedChar){
 	if (arrayLen(ZPT_Storage_Get("totalSupply")) == 0)
