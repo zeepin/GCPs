@@ -9,8 +9,8 @@
 Galaxy Consensus Proposals is Zeepin Smart Contract Interface.
 
 
-[GCP10_EN](/English/GCP10_EN.md) | [GCP10_CN](/README_CN.md)
+[GCP10_EN](/English/GCP10_EN.md) | [GCP10_中文](/Chinese/GCP10_CN.md)
 
-[GCP101_EN](/English/GCP101_EN.md) | [GCP101_CN](/README_CN.md)
+[GCP101_EN](/English/GCP101_EN.md) | [GCP101_中文](/Chinese/GCP101_CN.md)
 
-[GCP30_EN](/English/GCP30_EN.md) | [GCP30_CN](/Chinese/GCP30_CN.md)
+[GCP30_EN](/English/GCP30_EN.md) | [GCP30_中文](/Chinese/GCP30_CN.md)
