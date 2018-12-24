@@ -1,2 +1,2 @@
 # GCPs
-Galaxy Consensus Proposals
+Galaxy Consensus Proposals is Zeepin Smart Contract Interface.
