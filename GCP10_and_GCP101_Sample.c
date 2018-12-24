@@ -215,28 +215,6 @@ char * balanceOf(char * address){
     return balance;
 }
 
-//===================== STO 待实现======================
-/*
- //转账限制的判断函数
- int detectTransferRestriction(char * from, char * to, char * value){
- This function is where an issuer enforces the restriction logic of their token transfers.
- Some examples of this might include, checking if the token recipient is whitelisted, checking
- if a sender's tokens are frozen in a lock-up period, etc. Because implementation is up to the
- issuer, this function serves solely to standardize where execution of such logic should be initiated.
- Additionally, 3rd parties may publicly call this function to check the expected outcome of a transfer.
- Because this function returns a uint8 code rather than a boolean or just reverting, it allows the
- function caller to know the reason why a transfer might fail and report this to relevant counterparties.
- }
- 
- //判断结果的解释函数
- char * messageForTransferRestriction(int restrictionCode){
- This function is effectively an accessor for the "message", a human-readable explanation as to why a
- transaction is restricted. By standardizing message look-ups, we empower user interface builders to
- effectively report errors to users.
- }
- */
-//=====================================================
-
 char * transfer(char * fromAddr, char * toAddr, char * amountChar){
     if (Atoi(ZPT_Storage_Get("paused")) == 1)
         return "The contract has been paused.";
@@ -245,13 +223,7 @@ char * transfer(char * fromAddr, char * toAddr, char * amountChar){
     if (ZPT_Runtime_CheckWitness(fromAddr) == 0)
         return "Inconsistent address.";
     if (isStored(fromAddr) == 0)
-        return "Sender address is not in our database.";
-    
-    // // 合规检查
-    // int restrictionCode = detectTransferRestriction(fromAddr, toAddr, amountChar)
-    // if (restrictionCode != 0)
-    //    return messageForTransferRestriction(restrictionCode);
-    
+        return "Sender address is not in our database.";    
     int amount = Atoi(amountChar);
     if (amount <= 0)
         return "Transfer amount cannot be less than or equal to 0.";
@@ -287,12 +259,6 @@ char * transferFrom(char *fromAddr, char *spenderAddr, char *toAddr, char *amoun
         return "Sender address is not in our database.";
     if (isApproved(fromAddr, spenderAddr) == 0)
         return "Not approved.";
-    
-    // // 合规检查
-    // int restrictionCode = detectTransferRestriction(fromAddr, toAddr, amountChar)
-    // if (restrictionCode != 0)
-    //     return messageForTransferRestriction(restrictionCode);
-    
     int amount = Atoi(amountChar);
     if (amount <= 0)
         return "TransferFrom amount cannot be less than or equal to 0.";
