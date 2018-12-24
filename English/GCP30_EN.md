@@ -19,20 +19,20 @@ GCP-30(Galaxy Consensus Proposal) is a standard interface for non-fungible token
 ### Abstract
 The following standard allows for the implementation of a standard API for NFTs within smart contracts. This standard provides basic functionality to track and transfer NFTs.
 
-We considered use cases of NFTs being owned and transacted by individuals as well as consignment to third party brokers/wallets/auctioneers ("operators"). NFTs can represent ownership over digital or physical assets. We considered a diverse universe of assets, and we know you will dream up many more:
+We considered application sceneries of NFTs owned and transacted by individuals as well as consigned to third party brokers/wallets/auctioneers ("operators"). we would provide some suitable examples as below, meanwhile,try to come up with some new innovative ideas of your own.>.<
 
 * Physical property — houses, unique artwork
 * Virtual collectables — unique pictures of kittens, collectable cards
 * "Negative value" assets — loans, burdens and other responsibilities
 
-In general, all houses are distinct and no two kittens are alike. NFTs are distinguishable and you must track the ownership of each one separately.
+In general, all houses are distinct and no two kittens are alike. NFTs are distinguishable and you must track the ownership of each separately.
 ### Motivation
-A standard interface allows wallet/broker/auction applications to work with any NFT on Zeepin. We provide for simple GCP-30 smart contracts as well as contracts that track an arbitrarily large number of NFTs.
+A standard interface allows wallet/broker/auction applications to work with any NFT on Zeepin. We provide simple GCP-30 smart contracts as well as contracts that track an arbitrarily large number of NFTs.
 
 ### Specification
-**Every GCP-30 compliant contract must implement the `GCP-30` interfaces**，The following is the GCP-30 standard smart contract written in WA based on WASM. In this environment, the parameters are passed and the returned values are returned in the form of char, so we need to pay attention to the data type conversion when we write the contract.
+**Every GCP-30 compliant contract must implement the `GCP-30` interfaces**，The following is the GCP-30 standard smart contract written in WA based on WASM. In this environment, the parameters can pass through and the returned values are expressed in char,make sure you pay attention to the data type conversion when write the contract.
 
-Not much to say, let's start the implementation of GCP-30 directly. First, we need understand the main function interfaces that we need to use:
+Let's cutting short and start the implementation of GCP-30 directly. First, we need to understand the main function interfaces that we need to use:
 ```c
 char *OwnerOf(char *TokenID)
 //Returns the address of the tokenId  holder
@@ -82,7 +82,7 @@ char *Init()
 ```
 
 ##### totalSupply
-Can be used to query the total number of current NFTs tokens. If you use this command, the current total amount will be queried. The sample code is as follows:
+Can be used to query the total number of current NFTs tokens.Here is the sample code:
 ```c
 char *TotalSupply()
 {
@@ -95,7 +95,7 @@ char *TotalSupply()
 ```
 
 ##### create
-Create a new NFT token, each tokenID corresponding to a unique address. The sample code is as follows:
+Create a new NFT token, each tokenID corresponds to a unique address. For example:
 ```c
 char *Create(char *TokenID, char *address){
  if (arrayLen(ZPT_Storage_Get("totalSupply")) == 0)   //Determine if there is initialization
@@ -118,7 +118,7 @@ The content of the specific implementation is divided into two parts.
 
 1. When the address `from` is empty, the deposit of the TokenID and the address `to` is performed, and the amount of the NFTs owned by the corresponding address `to` is added;
 
-2. When the address `from` is not empty, a transfer relationship occurs. At the same time as the deposit of the TokenID and the address `to`, the address corresponding to the authorized newTokenID is deleted, and the amount of the NFTs owned by the address `from` is made Subtraction.
+2. When the address `from` is not empty, a transfer relationship occurs. At the same time as the deposit of the TokenID and the address `to`, the address corresponding to the authorized newTokenID is deleted, and the amount of the NFTs owned by the address `from` is subtracte.
 
 ```c
 void Transfer(char *from, char *to, char *TokenID)
@@ -218,9 +218,9 @@ Function: Authorize the TokenID owned by the address from to the address to
 
 Steps:
 
-* The address to is not empty;
+* The address to"_" is not empty;
 * Determine that the owner of this TokenID is consistent with the address from;
-* Confirm that the address from has the rights of the party.
+* Confirm that the address from “_” has the legit rights of the party.
 
 ```c
 char *Approve(char *from, char *to, char *TokenID)
@@ -255,7 +255,7 @@ Function: Query the authorized address of this TokenID.
 Steps:
 
 * Add TokenID prefix ap.;
-* It is judged whether the TokenID after the prefix is added has the corresponding address, and if it is empty, the input is incorrect;
+* deciding whether the newTokenID after the added prefix has the corresponding address, if empty, the input is incorrect;
 * Get the address
 
 ```c
@@ -278,7 +278,7 @@ Steps:
 
 * Add TokenID prefix ap.;
 * Extract the address that owns this newTokenID, ZPT_Storage_Get(newTokenID);
-* Then strcmp() compares the two addresses and returns the int type;
+* Then strcmp() compares the two addresses and returns int type;
 * Treat the int type as a char type and return 0 or 1.
 
 ```c
@@ -551,11 +551,12 @@ char *invoke(char *method, char *args)
 ```
 At this point, the analysis of the specific sample code is over. After all the writing is completed, you can click Build. After no error, you can click the Wasm on the page to download, and then you can use this file to deploy the smart contract.
 
-**I believe that you have seen through the above GCP-30 example, basically have the excellent contract code written in the c language based on wasm!**
+**We believe that after this GCP-30 example, Magicians/programmers can have the excellent contract code written in C based on Wasm!**
 
 #### Precautions
-The following are the anomalies that occur when an individual is writing.
+The following are the anomalies might occur:
 
-* Because the C language is used for contract development, all incoming and outgoing calls are char types, so pay attention to the conversion of data types;
-* The function written pays attention to its order. The C language calling function will only call the function that appeared before, so the called function should be placed above the calling function, otherwise it will report an error;
+* Because C is used for contract development, all incoming and outgoing calls are char types, so pay attention to the conversion of data types;
+* Pay attention to the function writen order. C only calls functions that appears before, so the called function should be placed ahead the calling function, otherwise it will report an error;
+
 
