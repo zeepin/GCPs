@@ -125,13 +125,14 @@ Then you can get the value of key "a" by the command below.
   <img  src="https://github.com/zeepin/GCPs/blob/master/src/screenshot/16.jpg">
 </p>
 
+##### deleteStorage
 Finally, you can delete a key-value pair from the database.
 
 <p align="center">
   <img  src="https://github.com/zeepin/GCPs/blob/master/src/screenshot/17.jpg">
 </p>
 
-Now you may understand how to deploy and invoke a smart contract on the Zeepin chain. You can have a try to write your own contract. If you want to issue tokens, either fungible tokens or non-fungible tokens, you can read our GCP-10 and GCP-30 protocols, which may be very helpful to you.
+Now you may understand how to deploy and invoke a smart contract on the Zeepin chain. You can have a try to write your own contract. If you wish to issue tokens, either fungible tokens or non-fungible tokens, you can read our GCP-10 and GCP-30 protocols, which may be very helpful to you.
 
 GCP-10: https://github.com/zeepin/GCPs/blob/master/English/GCP10_EN.md
 
