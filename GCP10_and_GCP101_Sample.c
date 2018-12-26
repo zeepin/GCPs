@@ -115,24 +115,20 @@ char * adminAddress = "ZNEo7CMRpQXGDgSwvhm2iDGPTXhVRJcMfc";
 char * pause(){
     if (Atoi(ZPT_Storage_Get("paused")) == 1)
         return "The contract has already been paused.";
-    if (ZPT_Runtime_CheckWitness(ceoAddress) == 0){
-        int paused = 1;
-        ZPT_Storage_Put("paused", Itoa(paused));
-        return "The cantract is paused successfully.";
-    }
-    return "You have no permission to pause the contract.";
+    if (ZPT_Runtime_CheckWitness(ceoAddress) == 0)
+        return "You have no permission to pause the contract.";
+    ZPT_Storage_Put("paused", "1");
+    return "The cantract is paused successfully.";
 }
 
 //Unpause the contract which is paused.
 char * unPause(){
     if (Atoi(ZPT_Storage_Get("paused")) == 0)
         return "No need to unpause because the contract is not under pause situation.";
-    if (ZPT_Runtime_CheckWitness(ceoAddress) == 0){
-        int paused = 0;
-        ZPT_Storage_Put("paused", Itoa(paused));
-        return "The cantract is unpaused successfully.";
-    }
-    return "You have no permission to unpause the contract.";
+    if (ZPT_Runtime_CheckWitness(ceoAddress) == 0)
+        return "You have no permission to unpause the contract.";
+    ZPT_Storage_Put("paused", "0");
+    return "The cantract is unpaused successfully.";
 }
 
 //Check if an account is in the database
