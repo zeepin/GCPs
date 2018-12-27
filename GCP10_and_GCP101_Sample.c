@@ -107,6 +107,9 @@ char * concat(char * a, char * b){
     return res;
 }
 
+
+char * symbol = "MOX";
+
 //contract administration
 char * ceoAddress = "ZEuzshrCsE1cnvPuuRrDYgnVYNDtyt5d3X";
 char * adminAddress = "ZNEo7CMRpQXGDgSwvhm2iDGPTXhVRJcMfc";
@@ -223,7 +226,7 @@ char * transfer(char * fromAddr, char * toAddr, char * amountChar){
     int amount = Atoi(amountChar);
     if (amount <= 0)
         return "Transfer amount cannot be less than or equal to 0.";
-    int balance_from = Atoi(BalanceOf(fromAddr));
+    int balance_from = Atoi(ZPT_Storage_Get(fromAddr));
     if (balance_from < amount)
         return "No sufficient balance.";
     
@@ -236,7 +239,7 @@ char * transfer(char * fromAddr, char * toAddr, char * amountChar){
     if (IsStored(toAddr) == 0)
         ZPT_Storage_Put(toAddr, amountChar);
     else {
-        int balance_to = Atoi(BalanceOf(toAddr));
+        int balance_to = Atoi(ZPT_Storage_Get(toAddr));
         balance_to += amount;
         ZPT_Storage_Put(toAddr,Itoa(balance_to));
     }
@@ -258,7 +261,7 @@ char * transferFrom(char *fromAddr, char *spenderAddr, char *toAddr, char *amoun
     int amount = Atoi(amountChar);
     if (amount <= 0)
         return "TransferFrom amount cannot be less than or equal to 0.";
-    int balance_from = Atoi(BalanceOf(fromAddr));
+    int balance_from = Atoi(ZPT_Storage_Get(fromAddr));
     if (balance_from < amount)
         return "No sufficient balance.";
     char * allowedKey = concat(fromAddr, spenderAddr);
@@ -277,7 +280,7 @@ char * transferFrom(char *fromAddr, char *spenderAddr, char *toAddr, char *amoun
     if (isStored(toAddr) == 0)
         ZPT_Storage_Put(toAddr, amountChar);
     else {
-        int balance_to = Atoi(BalanceOf(toAddr));
+        int balance_to = Atoi(ZPT_Storage_Get(toAddr));
         balance_to += amount;
         ZPT_Storage_Put(toAddr,Itoa(balance_to));
     }
@@ -303,7 +306,7 @@ char * approve(char * ownerAddr, char * spenderAddr, char * allowedChar){
     int allowed = Atoi(allowedChar);
     if (allowed <= 0)
         return "The allowance can not be less than or equal to 0.";
-    int balance_owner = Atoi(BalanceOf(ownerAddr));
+    int balance_owner = Atoi(ZPT_Storage_Get(ownerAddr));
     if (balance_owner < allowed)
         return "The allowance can not be larger than the balance of owner.";
     char * allowedKey = concat(ownerAddr, spenderAddr);
@@ -323,6 +326,21 @@ char * allowance(char * ownerAddr, char * spenderAddr){
 char * invoke(char * method,char * args){
     
     char * result;
+    
+    if (strcmp(method, "getSymbol")==0){
+        ZPT_Runtime_Notify(symbol);
+        return symbol;
+    }
+    
+    if (strcmp(method, "getCeoAddress")==0){
+        ZPT_Runtime_Notify(ceoAddress);
+        return ceoAddress;
+    }
+    
+    if (strcmp(method, "getAdminAddress")==0){
+        ZPT_Runtime_Notify(adminAddress);
+        return adminAddress;
+    }
     
     if (strcmp(method ,"pause")==0){
         if(count(args) != 1){
@@ -404,16 +422,6 @@ char * invoke(char * method,char * args){
         result = decreaseTotal(p->value);
         ZPT_Runtime_Notify(result);
         return result;
-    }
-    
-    if (strcmp(method, "getCeoAddress")==0){
-        ZPT_Runtime_Notify(ceoAddress);
-        return ceoAddress;
-    }
-    
-    if (strcmp(method, "getAdminAddress")==0){
-        ZPT_Runtime_Notify(adminAddress);
-        return adminAddress;
     }
     
     if (strcmp(method, "balanceOf")==0){
