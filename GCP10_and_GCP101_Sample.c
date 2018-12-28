@@ -236,7 +236,7 @@ char * transfer(char * fromAddr, char * toAddr, char * amountChar){
     else
         ZPT_Storage_Put(fromAddr,Itoa(balance_from));
     
-    if (IsStored(toAddr) == 0)
+    if (isStored(toAddr) == 0)
         ZPT_Storage_Put(toAddr, amountChar);
     else {
         int balance_to = Atoi(ZPT_Storage_Get(toAddr));
