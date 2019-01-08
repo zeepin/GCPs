@@ -114,6 +114,21 @@ char * symbol = "MOX";
 char * ceoAddress = "ZEuzshrCsE1cnvPuuRrDYgnVYNDtyt5d3X";
 char * adminAddress = "ZNEo7CMRpQXGDgSwvhm2iDGPTXhVRJcMfc";
 
+//Check if an account is in the database
+int isStored(char * key){
+    if (arrayLen(ZPT_Storage_Get(key)) == 0)
+        return 0;
+    return 1;
+}
+
+//Check if an account is appreved by another one
+int isApproved(char * owner, char * spender){
+    char * allowedKey = concat(owner, spender);
+    if (arrayLen(ZPT_Storage_Get(allowedKey)) == 0)
+        return 0;
+    return 1;
+}
+
 //Pause the contract to stop increaseTotal, decreaseTotal, transfer, transferFrom and approve methods
 char * pause(){
     if (Atoi(ZPT_Storage_Get("paused")) == 1)
@@ -134,33 +149,16 @@ char * unPause(){
     return "The cantract is unpaused successfully.";
 }
 
-//Check if an account is in the database
-int isStored(char * key){
-    if (arrayLen(ZPT_Storage_Get(key)) == 0)
-        return 0;
-    return 1;
-}
-
-//Check if an account is appreved by another one
-int isApproved(char * owner, char * spender){
-    char * allowedKey = concat(owner, spender);
-    if (arrayLen(ZPT_Storage_Get(allowedKey)) == 0)
-        return 0;
-    return 1;
-}
-
 //Initialize the contract, includes the totalSupply value.
-char * init(char * totalSupply, char * adminBalance){
+char * init(char * totalSupply){
     if (arrayLen(ZPT_Storage_Get("totalSupply")) != 0)
         return "Already initialized.";
     if (ZPT_Runtime_CheckWitness(ceoAddress) == 0)
         return "You have no permission to init.";
     if (Atoi(totalSupply) <= 0)
         return "The totalsupply can not be less than or equal to 0.";
-    if (Atoi(adminBalance) != Atoi(totalSupply))
-        return "The balance alloted to admin must be equal to the totalSupply.";
     ZPT_Storage_Put("totalSupply", totalSupply);
-    ZPT_Storage_Put(adminAddress, adminBalance);
+    ZPT_Storage_Put(adminAddress, totalSupply);
     ZPT_Storage_Put("paused", "0");
     return "Init success!";
 }
@@ -246,12 +244,21 @@ char * allowance(char * ownerAddr, char * spenderAddr){
 
 ///////////////////// STO 新增功能 /////////////////////
 
+//设置账户为正常状态
+char * setNormal(char * address){
+    if ((ZPT_Runtime_CheckWitness(ceoAddress) == 0) && (ZPT_Runtime_CheckWitness(adminAddress) == 0))
+        return "You have no permission to set account normal.";
+    char * addrStatus = concat(address, "status");
+    ZPT_Storage_Put(addrStatus, "1");
+    return "Set account normal success";
+}
+
 //设置黑名单
 char * setBlack(char * address){
     if ((ZPT_Runtime_CheckWitness(ceoAddress) == 0) && (ZPT_Runtime_CheckWitness(adminAddress) == 0))
         return "You have no permission to set account black.";
     char * addrStatus = concat(address, "status");
-    ZPT_Storage_Put(addrStatus, "1");
+    ZPT_Storage_Put(addrStatus, "2");
     return "Set account black success.";
 }
 
@@ -260,27 +267,18 @@ char * setFrozen(char * address){
     if ((ZPT_Runtime_CheckWitness(ceoAddress) == 0) && (ZPT_Runtime_CheckWitness(adminAddress) == 0))
         return "You have no permission to freeze an account.";
     char * addrStatus = concat(address, "status");
-    ZPT_Storage_Put(addrStatus, "2");
+    ZPT_Storage_Put(addrStatus, "3");
     return "Set account frozen success";
-}
-
-//设置账户为正常状态
-char * setNormal(char * address){
-    if ((ZPT_Runtime_CheckWitness(ceoAddress) == 0) && (ZPT_Runtime_CheckWitness(adminAddress) == 0))
-        return "You have no permission to set account normal.";
-    char * addrStatus = concat(address, "status");
-    ZPT_Storage_Put(addrStatus, "0");
-    return "Set account normal success";
 }
 
 //返回账户状态
 char * status(char * address){
     char * addrStatus = concat(address, "status");
-    if (Atoi(ZPT_Storage_Get(addrStatus)) == 0)
-        return "normal";
     if (Atoi(ZPT_Storage_Get(addrStatus)) == 1)
-        return "black";
+        return "normal";
     if (Atoi(ZPT_Storage_Get(addrStatus)) == 2)
+        return "black";
+    if (Atoi(ZPT_Storage_Get(addrStatus)) == 3)
         return "frozen";
     return "unchecked";
 }
@@ -416,47 +414,28 @@ char * invoke(char * method,char * args){
     }
     
     if (strcmp(method ,"pause")==0){
-        if(count(args) != 1){
-            ZPT_Runtime_Notify("The number of params is incorrect. Please input one params.");
-            return "The number of params is incorrect. Please input one params.";
-        }
-        struct Params{
-            char * address;
-        };
-        struct Params *p = (struct Params *)malloc(sizeof(struct Params));
-        ZPT_JsonUnmashalInput(p,sizeof(struct Params),args);
-        result = pause(p->address);
+        result = pause();
         ZPT_Runtime_Notify(result);
         return result;
     }
     
     if (strcmp(method ,"unpause")==0){
-        if(count(args) != 1){
-            ZPT_Runtime_Notify("The number of params is incorrect. Please input one params.");
-            return "The number of params is incorrect. Please input one params.";
-        }
-        struct Params{
-            char * address;
-        };
-        struct Params *p = (struct Params *)malloc(sizeof(struct Params));
-        ZPT_JsonUnmashalInput(p,sizeof(struct Params),args);
-        result = unPause(p->address);
+        result = unPause();
         ZPT_Runtime_Notify(result);
         return result;
     }
     
     if (strcmp(method ,"init")==0){
-        if(count(args) != 2){
-            ZPT_Runtime_Notify("The number of params is incorrect. Please input two params.");
-            return "The number of params is incorrect. Please input two params.";
+        if(count(args) != 1){
+            ZPT_Runtime_Notify("The number of params is incorrect. Please input one param.");
+            return "The number of params is incorrect. Please input one param.";
         }
         struct Params{
             char * totalSupply;
-            char * adminAddress;
         };
         struct Params *p = (struct Params *)malloc(sizeof(struct Params));
         ZPT_JsonUnmashalInput(p,sizeof(struct Params),args);
-        result = init(p->totalSupply, p->adminAddress);
+        result = init(p->totalSupply);
         ZPT_Runtime_Notify(result);
         return result;
     }
