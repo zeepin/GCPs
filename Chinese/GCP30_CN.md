@@ -231,7 +231,7 @@ char *Approve(char *from, char *to, char *TokenID)
         return false;
     if (Atoi(Owns(TokenID, from)) == 0)
         return false;
-    if (ZPT_Runtime_CheckWitness(from))
+    if (ZPT_Runtime_CheckWitness(from) == 0)
         return false;
     ApproveInternal(to, TokenID);
     return true;
@@ -310,7 +310,7 @@ char *TransferFromOwner(char *owner, char *to, char *TokenID)
         return false;
     if (Atoi(Owns(TokenID, owner)) == 0)
         return false;
-    if (ZPT_Runtime_CheckWitness(owner))
+    if (ZPT_Runtime_CheckWitness(owner) == 0)
         return false;
     Transfer(owner, to, TokenID);
     return true;
@@ -338,7 +338,7 @@ char *TransferFromApproval(char *from, char *to, char *approval, char *TokenID)
         return false;
     if (Atoi(Owns(TokenID, from)) == 0)
         return false;
-    if (ZPT_Runtime_CheckWitness(approval))
+    if (ZPT_Runtime_CheckWitness(approval) == 0)
         return false;
     Transfer(from, to, TokenID);
     return true;
